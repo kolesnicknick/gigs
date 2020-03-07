@@ -36,7 +36,11 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/gigs', gigsRouter);
 
-// catch 404 and forward to error handler
+
+//HandleBars
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
+
 app.use(function(req, res, next) {
   next(createError(404));
 });
@@ -51,10 +55,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-sequelize
-    .authenticate()
-    .then(()=>console.log('DB connected'))
-    .catch((err)=> console.log(err));
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`Server started at port: ${PORT}`));
 
