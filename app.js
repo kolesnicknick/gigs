@@ -21,7 +21,6 @@ sequelize
     .then(()=>console.log('DB connected'))
     .catch((err)=> console.log(err));
 
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -34,7 +33,7 @@ app.use(cookieParser());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/gigs', gigsRouter);
-
+app.use(bodyParser.urlencoded({extended: false}));
 
 //HandleBars
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
