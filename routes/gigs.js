@@ -40,10 +40,7 @@ router.post('/add', function (req, res, next) {
 
     //Check for errors
     if (errors.length > 0) {
-        res.render('add', {
-            errors,
-            title, technologies, budget, description, contact_email
-        });
+        res.render('add', {errors, title, technologies, budget, description, contact_email});
 
     } else {
         budget = !budget ? 'Unknown' : '$' + budget;
@@ -55,13 +52,10 @@ router.post('/add', function (req, res, next) {
             description,
             budget,
             contact_email
+        }).then((gig) => {
+            res.redirect('/gigs')
         })
-            .then((gig) => {
-                res.redirect('/gigs')
-            })
-            .catch((err) => {
-                console.log(err)
-            });
+            .catch(console.log);
     }
 });
 
@@ -70,9 +64,40 @@ router.get('/search', (req, res) => {
 
     term = term.toLowerCase();
     Gig.findAll({where: {technologies: {[Op.like]: `%${term}%`}}})
-        .then(gigs => res.render('gigs', { gigs }))
-        .catch(err => console.log(err));
+        .then(gigs => res.render('gigs', {gigs}))
+        .catch(console.log);
 });
+
+router.delete('/:id', (req, res) => {
+    Gig.destroy({where: {id: req.params.id}})
+        .then(res.send({status: 'Success', message: `User with id: ${req.params.id} is deleted`}))
+        .catch(console.log);
+});
+
+
+router.get('/edit/:id',  (req, res) => {
+      Gig.findAll({where: {id: req.params.id}})
+        .then(gig => {
+            let {title, technologies, budget, description, contact_email} = gig[0];
+            res.render('edit', {id: req.params.id, title, technologies, budget, description, contact_email});
+        })
+        .catch(console.log);
+});
+
+router.post('/:id', (req, res)=>{
+    let {title, technologies, budget, description, contact_email} = req.body;
+    Gig.update({
+            title,
+            technologies,
+            description,
+            budget,
+            contact_email
+        },
+        {where: {id: req.params.id}})
+        .then(res.send({status: 'Success', message: `User with id: ${req.params.id} is updated`}))
+        .catch(console.log);
+});
+
 
 module.exports = router;
 
