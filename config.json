@@ -1,0 +1,14 @@
+{
+  "database": {
+    "name": "gigs",
+    "user": "postgresql",
+    "password": "pass",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres"
+  },
+  "auth": {
+    "secretKey": "alakhamora",
+    "expiresIn": 360000
+  }
+}

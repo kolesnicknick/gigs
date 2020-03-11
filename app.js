@@ -1,3 +1,4 @@
+const passport = require('passport');
 const createError = require('http-errors');
 const express = require('express');
 const exphbs = require('express-handlebars');
@@ -6,20 +7,15 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-const gigsRouter = require('./routes/gigs');
-const Sequelize = require('sequelize');
-
+const indexRouter = require('./modules/routes/index');
+const usersRouter = require('./modules/routes/users');
+const gigsRouter = require('./modules/routes/gigs');
+const jwtAuth = require('./common/passport/jwt-auth');
 
 const app = express();
+require('./config/database');
 
-const sequelize =require('./config/database');
 
-sequelize
-    .authenticate()
-    .then(()=>console.log('DB connected'))
-    .catch((err)=> console.log(err));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,8 +27,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/gigs', gigsRouter);
+app.use('/users',  usersRouter);
+app.use('/gigs', jwtAuth, gigsRouter);
 app.use(bodyParser.urlencoded({extended: false}));
 
 //HandleBars
